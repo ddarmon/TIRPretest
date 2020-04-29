@@ -1,14 +1,3 @@
-#' Compute Reliability Measures from Mixed Effects Models
-#'
-#' @param dat The data frame containing the data.
-#' @param level The confidence level for the confidence intervals.
-#' @param B The number of bootstrap samples to generate for bootstrapped confidence intervals.
-#' 
-#' @return A list with the intraclass correlation coefficient,
-#'         standard error of measurement, and minimal detectable difference,
-#'         along with their confidence intervals, computed from
-#'         mixed effects models corresponding to ICC(1, 1) and 
-#'         ICC(2, 1) models.
 compute.reliability.measures <- function(dat, level = 0.95, B = 500){
   
   # Reformat data for use with `psych`'s ICC() function,
