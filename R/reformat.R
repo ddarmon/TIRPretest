@@ -1,5 +1,4 @@
 # For a generic data matrix
-#' @export
 format.for.icc <- function(X){
   nv <- ncol(X) # number of visits per subject
   ns <- nrow(X) # number of subjects
@@ -14,7 +13,6 @@ format.for.icc <- function(X){
 }
 
 # For the specific Excel format used by NKI
-#' @export
 restack.df <- function(dat, measure){
   ids <- rep(dat$Subject_ID, times = 3)
   visits <- rep(1:3, each = nrow(dat))

@@ -1,4 +1,3 @@
-#' @export
 compute.reliability.measures <- function(dat, level = 0.95, B = 500){
 
   # Reformat data for use with `psych`'s ICC() function,
