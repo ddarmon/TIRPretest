@@ -79,7 +79,7 @@ compute.reliability.measures <- function(dat, level = 0.95, B = 500){
     s <- sigma(.)
     sd.components <- unname(s * getME(., "theta"))
 
-    c(beta =getME(., "beta"), sigma = s, sig0 = sd.components, diff.var = 2*(s^2 + sd.components[2]))
+    c(beta =getME(., "beta"), sigma = s, sig0 = sd.components, diff.var = 2*(s^2 + sd.components[2]^2))
   }
 
   # Fit the ICC(2, 1) model which includes a random effect per-subject
@@ -105,7 +105,7 @@ compute.reliability.measures <- function(dat, level = 0.95, B = 500){
   icc21.mdd <- qnorm(0.975)*icc21.sem
 
   # Store the results for the ICC(2, 1) model in a matrix.
-
+  
   results <- matrix(nrow = 3, ncol = 3)
 
   results[1, ] <- icc.21
