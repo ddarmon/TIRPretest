@@ -9,7 +9,7 @@
 #'         along with their confidence intervals, computed from
 #'         mixed effects models corresponding to ICC(1, 1) and
 #'         ICC(2, 1) models.
-compute.reliability.measures <- function(dat, level = 0.95, B = 500){
+compute.reliability.measures <- function(dat, level = 0.95, B = 500, profile.icc21.sem = FALSE){
 
   # Reformat data for use with `psych`'s ICC() function,
   # which expects one row per-subject, and one column
@@ -91,32 +91,62 @@ compute.reliability.measures <- function(dat, level = 0.95, B = 500){
 
   params <- mySumm(mod.icc21)
 
-  # Bootstrap confidence intervals for the SEM.
+  # Bootstrap confidence intervals for the SEM and MDD.
 
   boot.out <-  bootMer(mod.icc21, mySumm, nsim = B)#, .progress = 'txt')
 
   diff.boot.ci <- boot::boot.ci(boot.out, index=5, type=c("norm", "basic", "perc"))
 
-  ci.icc21.sem <- sqrt(diff.boot.ci$percent[4:5])
+  ci.icc21.sem.boot <- sqrt(diff.boot.ci$percent[4:5])
 
-  ci.icc21.mdd <- qnorm(0.975)*sqrt(diff.boot.ci$percent[4:5])
+  ci.icc21.mdd.boot <- qnorm(0.975)*sqrt(diff.boot.ci$percent[4:5])
+
+  # Profile confidence intervals for the SEM and MDD (if desired).
+
+  if (profile.icc21.sem){
+    prof.icc21.sem <- profile.ci.for.icc.sem(mod.icc21, level = level)
+
+    ci.icc21.sem.prof <- prof.icc21.sem
+    ci.icc21.mdd.prof <- qnorm(0.975)*prof.icc21.sem
+  }
 
   icc21.sem <- sqrt(params[5])
   icc21.mdd <- qnorm(0.975)*icc21.sem
 
   # Store the results for the ICC(2, 1) model in a matrix.
 
-  results <- matrix(nrow = 3, ncol = 3)
+  if (profile.icc21.sem){
+    results <- matrix(nrow = 5, ncol = 3)
 
-  results[1, ] <- icc.21
+    results[1, ] <- icc.21
 
-  results[2, 1] <- icc21.sem
-  results[2, 2:3] <- ci.icc21.sem
-  results[3, 1] <- icc21.mdd
-  results[3, 2:3] <- ci.icc21.mdd
+    results[2, 1] <- icc21.sem
+    results[2, 2:3] <- ci.icc21.sem.prof
 
-  colnames(results) <- c('Estimate', sprintf('%g%% LB', 100*level), sprintf('%g%% UB', 100*level))
-  rownames(results) <- c('ICC(2, 1)', 'SEM (Boot)', 'MDD (Boot)')
+    results[3, 1] <- icc21.sem
+    results[3, 2:3] <- ci.icc21.sem.boot
+
+    results[4, 1] <- icc21.mdd
+    results[4, 2:3] <- ci.icc21.mdd.prof
+
+    results[5, 1] <- icc21.mdd
+    results[5, 2:3] <- ci.icc21.mdd.boot
+
+    colnames(results) <- c('Estimate', sprintf('%g%% LB', 100*level), sprintf('%g%% UB', 100*level))
+    rownames(results) <- c('ICC(2, 1)', 'SEM (Prof.)', 'SEM (Boot)', 'MDD (Prof.)', 'MDD (Boot)')
+  }else{
+    results <- matrix(nrow = 3, ncol = 3)
+
+    results[1, ] <- icc.21
+
+    results[2, 1] <- icc21.sem
+    results[2, 2:3] <- ci.icc21.sem.boot
+    results[3, 1] <- icc21.mdd
+    results[3, 2:3] <- ci.icc21.mdd.boot
+
+    colnames(results) <- c('Estimate', sprintf('%g%% LB', 100*level), sprintf('%g%% UB', 100*level))
+    rownames(results) <- c('ICC(2, 1)', 'SEM (Boot)', 'MDD (Boot)')
+  }
 
   ret$icc21 <- results
 
