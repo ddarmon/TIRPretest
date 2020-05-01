@@ -7,7 +7,7 @@ format.for.icc <- function(X){
 
   dim(x) <- NULL # flattens X in column-major order
 
-  x.df <- data.frame(id = rep(1:ns, times = nv), visit = rep(1:nv, each = ns), measurement = x)
+  x.df <- data.frame(id = rep(1:ns, times = nv), visit = rep(1:nv, each = ns), measure = x)
 
   return(x.df)
 }
