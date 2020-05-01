@@ -6,7 +6,7 @@ Author: David Darmon
 Maintainer: David Darmon <ddarmon@monmouth.edu>
 Description: Estimate reliability measures using Mixed Effects Models.
     For use with test-retest reliability study.
-Depends: psych (>= 1.9.12), lme4 (>= 1.1.23)
+Depends: psych (>= 1.9.12), lme4 (>= 1.1.23), alabama (>= 2015.3-1)
 License: GNU
 Encoding: UTF-8
 LazyData: true
