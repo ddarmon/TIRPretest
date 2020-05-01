@@ -104,10 +104,12 @@ compute.reliability.measures <- function(dat, level = 0.95, B = 500, profile.icc
   # Profile confidence intervals for the SEM and MDD (if desired).
 
   if (profile.icc21.sem){
-    prof.icc21.sem <- profile.ci.for.icc.sem(mod.icc21, level = level)
+    mod.icc21.mle <- lmer(measure ~ 1 + (1 | id) + (1 | visit), data = dat, REML = FALSE)
 
-    ci.icc21.sem.prof <- prof.icc21.sem
-    ci.icc21.mdd.prof <- qnorm(0.975)*prof.icc21.sem
+    prof.icc21.sem <- profile.ci.for.icc.sem(mod.icc21.mle, level = level)
+
+    ci.icc21.sem.prof <- prof.icc21.sem$ci
+    ci.icc21.mdd.prof <- qnorm(0.975)*ci.icc21.sem.prof
   }
 
   icc21.sem <- sqrt(params[5])
